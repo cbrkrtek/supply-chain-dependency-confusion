@@ -1,0 +1,7 @@
+{
+  "name": "protected-enterprise-app",
+  "version": "1.0.0",
+  "dependencies": {
+    "@yourorg/internal-utils": ">=1.0.0"
+  }
+}

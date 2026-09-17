@@ -1,0 +1,8 @@
+{
+  "name": "@yourorg/internal-utils",
+  "version": "1.0.0",
+  "description": "Legitimate internal enterprise utility library",
+  "main": "index.js",
+  "author": "Cybersecurity specialist",
+  "license": "ISC"
+}
