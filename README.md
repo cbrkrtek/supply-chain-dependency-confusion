@@ -2,6 +2,10 @@
 
 A self-hosted lab reproducing **Dependency Confusion**, the supply-chain attack where a package manager installs a public, attacker-controlled package instead of an organization's private package of the same name. Built on **Sonatype Nexus Repository OSS**, covering both **npm** and **pip**, with two candidate defenses tested and compared.
 
+## TL;DR / Key Finding
+
+**Nexus Routing Rules - the documented server-side fix for Dependency Confusion - silently do nothing when the conflict happens inside a group repository between two *hosted* repositories.** That's exactly the topology used here, and a common one in real deployments. In that setup, client-side scoping isn't one of two valid defenses - it's the only one that actually works. Full breakdown under "Key Finding" below.
+
 ## Stack
 
 - Sonatype Nexus Repository OSS 3.68, via Docker Compose
@@ -48,7 +52,7 @@ A group repository resolves a package name by combining metadata from every memb
 
 ## Defenses Tested
 
-### ✅ Fix A - Client-Side Scoping (effective)
+###  Fix A - Client-Side Scoping (effective)
 
 - **npm:** internal package renamed to a scoped package, `@yourorg/internal-utils`. `.npmrc` routes the `@yourorg` scope directly to `npm-internal-hosted`, bypassing the group entirely.
 - **pip:** `--extra-index-url` (searches every configured index, returns the highest version - the same vulnerable behavior) replaced with a hard `--index-url` pointed only at `pypi-internal-hosted`.
@@ -59,11 +63,11 @@ Result: the protected client resolves the trusted internal `1.0.0` in both ecosy
 ![Protected client installs and loads the legitimate internal package](evidence/09-protected-install-success.png)
 ![pip locked to the internal index only, install succeeds safely](evidence/10-pip-vulnerable-vs-protected.png)
 
-### ⚠️ Fix B - Server-Side Routing Rules (partial - see finding below)
+###  Fix B - Server-Side Routing Rules (partial - see finding below)
 
 Nexus Routing Rules were configured to block requests matching the `internal-.*` pattern, applied at the server level.
 
-## Key Finding
+## Key Finding (detailed)
 
 **Nexus Routing Rules only apply to traffic passing through proxy repositories.** When the conflict occurs *inside a group repository between two hosted repositories* - the exact topology used here, and a common one in real Nexus deployments - Routing Rules do not intervene, and the imposter can still win.
 
